@@ -49,7 +49,7 @@ def Podcast_summary():
     #first create database will be executed and then podcast_episode will run, we are doing this because using old way to create task.
     create_database.set_downstream(podcast_epiosdes)
 
-    #task3
+    #task3 :  to get latest episodes 
     @task()
     def load_episodes(episodes):
         hook = SqliteHook(sqlite_conn_id = 'podcasts')
@@ -64,7 +64,8 @@ def Podcast_summary():
         hook.insert_rows(table= "episodes", rows = new_episodes, target_fields=["link", "title", "published", "description", "filename"])
 
     load_episodes(podcast_epiosdes)
-
+    
+    #task4 : download episode files into a folder
     @task()
     def download_episodes(episodes):
         os.environ['NO_PROXY'] = "https://www.marketplace.org/feed/podcast/marketplace/"
